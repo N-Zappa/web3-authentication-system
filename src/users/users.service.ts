@@ -9,4 +9,8 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
+
+  async existsByWallet(wallet: string) {
+    return await this.usersRepository.exists({ where: { wallet: wallet } });
+  }
 }

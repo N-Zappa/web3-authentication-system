@@ -11,6 +11,9 @@ import {
 } from './config/config';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { Nonce } from './nonces/entities/nonce.entity';
+import { NonceModule } from './nonces/nonce.module';
 
 @Module({
   imports: [
@@ -21,12 +24,14 @@ import { UsersModule } from './users/users.module';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User],
+      entities: [User, Nonce],
       migrations: [__dirname.replace('src', 'migrations') + '/*.ts'],
       synchronize: false,
       logging: true,
     }),
     UsersModule,
+    AuthModule,
+    NonceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
