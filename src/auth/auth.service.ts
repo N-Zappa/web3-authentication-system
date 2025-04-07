@@ -1,6 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { NonceService } from 'src/nonces/nonce.service';
+import { SignInDto } from './dto/sign-in.dto';
+import { verifyMessage } from 'ethers';
 
 @Injectable()
 export class AuthService {
@@ -26,5 +28,14 @@ export class AuthService {
       };
     }
     return { nonce: nonceInfo.nonce, timestamp: nonceInfo.timestamp };
+  }
+
+  async signIn(dto: SignInDto) {
+    const recoveredWallet = verifyMessage(dto.nonce, dto.signature);
+
+    if (recoveredWallet.toLowerCase() !== dto.wallet.toLowerCase()) {
+      throw new ForbiddenException('Wrong signature');
+    } else {
+    }
   }
 }
