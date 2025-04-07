@@ -8,16 +8,23 @@ export class AuthService {
   private readonly nonceService: NonceService;
 
   private generateNonce() {
-    return `${randomBytes(32).toString('hex')}-${Date.now()}`;
+    const timestamp = Date.now();
+    return {
+      nonce: `${randomBytes(32).toString('hex')}-${timestamp}`,
+      timestamp: timestamp,
+    };
   }
 
   async getNonce(wallet: string) {
     const nonceInfo = await this.nonceService.getNonceByWallet(wallet);
     if (!nonceInfo) {
-      const nonce = this.generateNonce();
-      await this.nonceService.insertNonce(wallet, nonce);
-      return nonce;
+      const generatedNonce = this.generateNonce();
+      await this.nonceService.insertNonce(wallet, generatedNonce.nonce);
+      return {
+        nonce: generatedNonce.nonce,
+        timestamp: generatedNonce.timestamp,
+      };
     }
-    return { nonce: nonceInfo.nonce };
+    return { nonce: nonceInfo.nonce, timestamp: nonceInfo.timestamp };
   }
 }
