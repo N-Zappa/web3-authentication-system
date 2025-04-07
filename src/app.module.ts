@@ -14,6 +14,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { Nonce } from './nonces/entities/nonce.entity';
 import { NonceModule } from './nonces/nonce.module';
+import { Session } from 'inspector/promises';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { NonceModule } from './nonces/nonce.module';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Nonce],
+      entities: [User, Nonce, Session],
       migrations: [__dirname.replace('src', 'migrations') + '/*.ts'],
       synchronize: false,
       logging: true,
@@ -32,6 +34,7 @@ import { NonceModule } from './nonces/nonce.module';
     UsersModule,
     AuthModule,
     NonceModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

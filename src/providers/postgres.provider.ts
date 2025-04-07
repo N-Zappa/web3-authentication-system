@@ -7,6 +7,7 @@ import {
   DB_USERNAME,
 } from 'src/config/config';
 import { Nonce } from 'src/nonces/entities/nonce.entity';
+import { Session } from 'src/sessions/entities/session.entity';
 import { User } from 'src/users/entities/user.entity';
 import { DataSource } from 'typeorm';
 
@@ -17,7 +18,7 @@ const dataSource = new DataSource({
   username: DB_USERNAME,
   password: DB_PASSWORD,
   database: DB_NAME,
-  entities: [User, Nonce],
+  entities: [User, Nonce, Session],
   migrations: [join(__dirname, '..', '..', 'migrations', '*.js')],
   synchronize: false,
   logging: false,

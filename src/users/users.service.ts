@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { IUserType } from './types/users.type';
 
 @Injectable()
 export class UsersService {
@@ -11,6 +12,12 @@ export class UsersService {
   ) {}
 
   async existsByWallet(wallet: string) {
-    return await this.usersRepository.exists({ where: { wallet: wallet } });
+    return await this.usersRepository.exists({
+      where: { wallet: wallet.toLowerCase() },
+    });
+  }
+
+  async saveUser(userDto: IUserType) {
+    return await this.usersRepository.save(userDto);
   }
 }

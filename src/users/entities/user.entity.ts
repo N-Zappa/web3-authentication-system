@@ -1,7 +1,9 @@
+import { Session } from 'src/sessions/entities/session.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -13,21 +15,15 @@ export class User {
   @Column({ nullable: false })
   wallet: string;
 
-  @Column({ nullable: false })
-  status: string;
-
-  @Column({ nullable: false })
-  fingerprint: string;
-
-  @Column({ nullable: false })
-  ip: string;
-
-  @Column({ nullable: false })
-  userAgent: string;
+  @Column('text', { default: 'WAITING' })
+  status: 'ACTIVE' | 'BANNED' | 'SUSPENDED' | 'DELETED';
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @CreateDateColumn()
-  lastLoginAt: Date;
+  last_login_at: Date;
+
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[];
 }

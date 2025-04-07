@@ -3,11 +3,15 @@ import { randomBytes } from 'crypto';
 import { NonceService } from 'src/nonces/nonce.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { verifyMessage } from 'ethers';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
   @Inject()
   private readonly nonceService: NonceService;
+
+  @Inject()
+  private readonly usersService: UsersService;
 
   private generateNonce() {
     const timestamp = Date.now();
@@ -36,6 +40,14 @@ export class AuthService {
     if (recoveredWallet.toLowerCase() !== dto.wallet.toLowerCase()) {
       throw new ForbiddenException('Wrong signature');
     } else {
+      if (!(await this.usersService.existsByWallet(dto.wallet))) {
+        await this.usersService.saveUser({
+          wallet: dto.wallet,
+          status: 'ACTIVE',
+          createdAt: new Date(),
+          lastLoginAt: new Date(),
+        });
+      }
     }
   }
 }
