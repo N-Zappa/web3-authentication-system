@@ -14,8 +14,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { Nonce } from './nonces/entities/nonce.entity';
 import { NonceModule } from './nonces/nonce.module';
-import { Session } from 'inspector/promises';
 import { SessionsModule } from './sessions/sessions.module';
+import { Session } from './sessions/entities/session.entity';
 
 @Module({
   imports: [

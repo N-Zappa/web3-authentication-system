@@ -12,4 +12,13 @@ export class SignInDto {
 
   @IsNumber()
   timestamp: number;
+
+  @IsString()
+  fingerprint: string;
+
+  @IsString()
+  ip: string;
+
+  @IsString()
+  userAgent: string;
 }

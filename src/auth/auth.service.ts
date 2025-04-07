@@ -4,6 +4,7 @@ import { NonceService } from 'src/nonces/nonce.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { verifyMessage } from 'ethers';
 import { UsersService } from 'src/users/users.service';
+import { SessionsService } from 'src/sessions/sessions.service';
 
 @Injectable()
 export class AuthService {
@@ -13,12 +14,19 @@ export class AuthService {
   @Inject()
   private readonly usersService: UsersService;
 
+  @Inject()
+  private readonly sessionsService: SessionsService;
+
   private generateNonce() {
     const timestamp = Date.now();
     return {
       nonce: `${randomBytes(32).toString('hex')}-${timestamp}`,
       timestamp: timestamp,
     };
+  }
+
+  private generateRefreshToken() {
+    return randomBytes(32).toString('hex');
   }
 
   async getNonce(wallet: string) {
@@ -41,13 +49,27 @@ export class AuthService {
       throw new ForbiddenException('Wrong signature');
     } else {
       if (!(await this.usersService.existsByWallet(dto.wallet))) {
-        await this.usersService.saveUser({
+        const savedUser = await this.usersService.saveUser({
           wallet: dto.wallet,
           status: 'ACTIVE',
           createdAt: new Date(),
           lastLoginAt: new Date(),
         });
+
+        const refreshToken = this.generateRefreshToken();
+
+        await this.sessionsService.createSession({
+          user: savedUser,
+          refresh_token: refreshToken,
+          fingerprint: dto.fingerprint,
+          ip: dto.ip,
+          user_agent: dto.userAgent,
+          created_at: new Date(),
+          last_used_at: new Date(),
+          is_active: true,
+        });
       }
+      return true;
     }
   }
 }
