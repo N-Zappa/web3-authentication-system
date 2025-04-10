@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class SignInDto {
   @IsString()
@@ -25,8 +25,4 @@ export class SignInDto {
   @IsString()
   @ApiProperty()
   userAgent: string;
-
-  @IsString()
-  @ApiProperty()
-  refresh_token: string;
 }

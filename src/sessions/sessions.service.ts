@@ -19,4 +19,11 @@ export class SessionsService {
       relations: ['user'],
     });
   }
+
+  async getSessionById(id: string) {
+    return await this.sessionRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+  }
 }

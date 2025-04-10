@@ -11,6 +11,7 @@ import { verifyMessage } from 'ethers';
 import { UsersService } from 'src/users/users.service';
 import { SessionsService } from 'src/sessions/sessions.service';
 import { JwtService } from '@nestjs/jwt';
+import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -50,20 +51,6 @@ export class AuthService {
       throw new ForbiddenException('Wrong signature');
     } else {
       if (await this.usersService.existsByWallet(dto.wallet.toLowerCase())) {
-        const user = await this.usersService.getUserByWallet(dto.wallet);
-        const session = await this.sessionsService.getSessionByUserId(user.id);
-        if (session.refresh_token !== dto.refresh_token) {
-          throw new UnauthorizedException('Wrong refresh token');
-        } else {
-          const payload = {
-            wallet: dto.wallet,
-          };
-
-          return {
-            accessToken: await this.jwtService.signAsync(payload),
-            refreshToken: session.refresh_token,
-          };
-        }
       } else {
         const savedUser = await this.usersService.saveUser({
           wallet: dto.wallet.toLowerCase(),
@@ -94,6 +81,25 @@ export class AuthService {
           refreshToken: refreshToken,
         };
       }
+    }
+  }
+
+  async refreshAccessToken(dto: RefreshAccessTokenDto) {
+    const session = await this.sessionsService.getSessionById(dto.sessionId);
+    if (!session) {
+      throw new UnauthorizedException('No session found');
+    }
+    if (session.refresh_token !== dto.refreshToken) {
+      throw new UnauthorizedException('Wrong refresh token');
+    } else {
+      const payload = {
+        wallet: session.user.wallet,
+      };
+
+      return {
+        accessToken: await this.jwtService.signAsync(payload),
+        refreshToken: session.refresh_token,
+      };
     }
   }
 }
