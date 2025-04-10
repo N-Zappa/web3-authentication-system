@@ -26,4 +26,19 @@ export class SessionsService {
       relations: ['user'],
     });
   }
+
+  async findExistingSession(
+    userId: string,
+    fingerprint: string,
+    userAgent: string,
+  ) {
+    return this.sessionRepository.findOne({
+      where: {
+        user: { id: userId },
+        fingerprint,
+        user_agent: userAgent,
+        is_active: true,
+      },
+    });
+  }
 }

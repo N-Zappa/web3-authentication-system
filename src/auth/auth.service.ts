@@ -51,6 +51,46 @@ export class AuthService {
       throw new ForbiddenException('Wrong signature');
     } else {
       if (await this.usersService.existsByWallet(dto.wallet.toLowerCase())) {
+        const user = await this.usersService.getUserByWallet(
+          dto.wallet.toLowerCase(),
+        );
+
+        const existingSession = await this.sessionsService.findExistingSession(
+          user.id,
+          dto.fingerprint,
+          dto.userAgent,
+        );
+
+        if (existingSession) {
+          return {
+            accessToken: await this.jwtService.signAsync({
+              wallet: user.wallet,
+            }),
+            refreshToken: existingSession.refresh_token,
+            sessionId: existingSession.id,
+          };
+        }
+
+        const refreshToken = this.generateRefreshToken();
+
+        const session = await this.sessionsService.createSession({
+          user: user,
+          refresh_token: refreshToken,
+          fingerprint: dto.fingerprint,
+          ip: dto.ip,
+          user_agent: dto.userAgent,
+          created_at: new Date(),
+          last_used_at: new Date(),
+          is_active: true,
+        });
+
+        return {
+          accessToken: await this.jwtService.signAsync({
+            wallet: user.wallet,
+          }),
+          refreshToken: session.refresh_token,
+          sessionId: session.id,
+        };
       } else {
         const savedUser = await this.usersService.saveUser({
           wallet: dto.wallet.toLowerCase(),
