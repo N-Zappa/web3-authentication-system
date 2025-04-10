@@ -2,8 +2,10 @@ import { Body, Controller, Inject, Post, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { EvmAddressValidationPipe } from 'src/pipes/evm-address-validation.pipe';
 import { SignInDto } from './dto/sign-in.dto';
+import { Public } from './public';
 
 @Controller('auth')
+@Public()
 export class AuthController {
   @Inject()
   private readonly authService: AuthService;

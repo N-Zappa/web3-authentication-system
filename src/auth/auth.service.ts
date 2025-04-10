@@ -5,6 +5,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { verifyMessage } from 'ethers';
 import { UsersService } from 'src/users/users.service';
 import { SessionsService } from 'src/sessions/sessions.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,9 @@ export class AuthService {
 
   @Inject()
   private readonly sessionsService: SessionsService;
+
+  @Inject()
+  private readonly jwtService: JwtService;
 
   private generateNonce() {
     const timestamp = Date.now();
@@ -68,8 +72,15 @@ export class AuthService {
           last_used_at: new Date(),
           is_active: true,
         });
+
+        const payload = {
+          wallet: dto.wallet,
+        };
+
+        return {
+          accessToken: await this.jwtService.signAsync(payload),
+        };
       }
-      return true;
     }
   }
 }

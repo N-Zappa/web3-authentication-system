@@ -16,6 +16,8 @@ import { Nonce } from './nonces/entities/nonce.entity';
 import { NonceModule } from './nonces/nonce.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { Session } from './sessions/entities/session.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/auth.guard';
 
 @Module({
   imports: [
@@ -37,6 +39,12 @@ import { Session } from './sessions/entities/session.entity';
     SessionsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -4,6 +4,7 @@ import { getEnv } from './get-env';
 
 //Environment
 export const PORT = +getEnv('PORT');
+export const JWT_SECRET = getEnv('JWT_SECRET');
 
 //DB
 export const DB_PORT = +getEnv('DB_PORT');
