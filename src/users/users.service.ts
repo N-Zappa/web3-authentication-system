@@ -20,4 +20,10 @@ export class UsersService {
   async saveUser(userDto: IUserType) {
     return await this.usersRepository.save(userDto);
   }
+
+  async getUserByWallet(wallet: string) {
+    return await this.usersRepository.findOne({
+      where: { wallet: wallet.toLowerCase() },
+    });
+  }
 }

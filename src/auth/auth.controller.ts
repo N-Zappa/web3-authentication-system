@@ -1,4 +1,11 @@
-import { Body, Controller, Inject, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  Post,
+  Query,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { EvmAddressValidationPipe } from 'src/pipes/evm-address-validation.pipe';
 import { SignInDto } from './dto/sign-in.dto';
@@ -19,7 +26,7 @@ export class AuthController {
   }
 
   @Post('sign-in')
-  async signIn(@Body() dto: SignInDto) {
+  async signIn(@Body(new ValidationPipe()) dto: SignInDto) {
     return this.authService.signIn(dto);
   }
 }

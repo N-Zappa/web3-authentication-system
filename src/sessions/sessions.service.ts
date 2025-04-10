@@ -12,4 +12,11 @@ export class SessionsService {
   async createSession(sessionDto: ISessionType) {
     return await this.sessionRepository.save(sessionDto);
   }
+
+  async getSessionByUserId(userId: string) {
+    return await this.sessionRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+  }
 }

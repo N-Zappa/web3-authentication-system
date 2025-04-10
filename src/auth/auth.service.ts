@@ -1,4 +1,9 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { NonceService } from 'src/nonces/nonce.service';
 import { SignInDto } from './dto/sign-in.dto';
@@ -21,14 +26,6 @@ export class AuthService {
   @Inject()
   private readonly jwtService: JwtService;
 
-  private generateNonce() {
-    const timestamp = Date.now();
-    return {
-      nonce: `${randomBytes(32).toString('hex')}-${timestamp}`,
-      timestamp: timestamp,
-    };
-  }
-
   private generateRefreshToken() {
     return randomBytes(32).toString('hex');
   }
@@ -36,7 +33,7 @@ export class AuthService {
   async getNonce(wallet: string) {
     const nonceInfo = await this.nonceService.getNonceByWallet(wallet);
     if (!nonceInfo) {
-      const generatedNonce = this.generateNonce();
+      const generatedNonce = this.nonceService.generateNonce();
       await this.nonceService.insertNonce(wallet, generatedNonce.nonce);
       return {
         nonce: generatedNonce.nonce,
@@ -52,9 +49,24 @@ export class AuthService {
     if (recoveredWallet.toLowerCase() !== dto.wallet.toLowerCase()) {
       throw new ForbiddenException('Wrong signature');
     } else {
-      if (!(await this.usersService.existsByWallet(dto.wallet))) {
+      if (await this.usersService.existsByWallet(dto.wallet.toLowerCase())) {
+        const user = await this.usersService.getUserByWallet(dto.wallet);
+        const session = await this.sessionsService.getSessionByUserId(user.id);
+        if (session.refresh_token !== dto.refresh_token) {
+          throw new UnauthorizedException('Wrong refresh token');
+        } else {
+          const payload = {
+            wallet: dto.wallet,
+          };
+
+          return {
+            accessToken: await this.jwtService.signAsync(payload),
+            refreshToken: session.refresh_token,
+          };
+        }
+      } else {
         const savedUser = await this.usersService.saveUser({
-          wallet: dto.wallet,
+          wallet: dto.wallet.toLowerCase(),
           status: 'ACTIVE',
           createdAt: new Date(),
           lastLoginAt: new Date(),
@@ -79,6 +91,7 @@ export class AuthService {
 
         return {
           accessToken: await this.jwtService.signAsync(payload),
+          refreshToken: refreshToken,
         };
       }
     }

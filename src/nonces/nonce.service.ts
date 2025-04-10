@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Nonce } from './entities/nonce.entity';
 import { Repository } from 'typeorm';
 import { INonce } from './types/nonce.type';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class NonceService {
@@ -10,6 +11,14 @@ export class NonceService {
     @InjectRepository(Nonce)
     private nonceRepository: Repository<Nonce>,
   ) {}
+
+  generateNonce() {
+    const timestamp = Date.now();
+    return {
+      nonce: `${randomBytes(32).toString('hex')}-${timestamp}`,
+      timestamp: timestamp,
+    };
+  }
 
   async getNonceByWallet(wallet: string) {
     return await this.nonceRepository.findOne({
