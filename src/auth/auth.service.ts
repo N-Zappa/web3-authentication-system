@@ -61,7 +61,7 @@ export class AuthService {
 
         const refreshToken = this.generateRefreshToken();
 
-        await this.sessionsService.createSession({
+        const session = await this.sessionsService.createSession({
           user: savedUser,
           refresh_token: refreshToken,
           fingerprint: dto.fingerprint,
@@ -79,6 +79,7 @@ export class AuthService {
         return {
           accessToken: await this.jwtService.signAsync(payload),
           refreshToken: refreshToken,
+          sessionId: session.id,
         };
       }
     }
