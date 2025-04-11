@@ -12,6 +12,8 @@ import { UsersService } from 'src/users/users.service';
 import { SessionsService } from 'src/sessions/sessions.service';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
+import axios from 'axios';
+import { IP_API } from 'src/config/config';
 
 @Injectable()
 export class AuthService {
@@ -59,6 +61,7 @@ export class AuthService {
           user.id,
           dto.fingerprint,
           dto.userAgent,
+          dto.ip,
         );
 
         if (existingSession) {
@@ -73,6 +76,9 @@ export class AuthService {
 
         const refreshToken = this.generateRefreshToken();
 
+        const response = await axios.get(`${IP_API}/${dto.ip}/json/`);
+        const country = response.data;
+
         const session = await this.sessionsService.createSession({
           user: user,
           refresh_token: refreshToken,
@@ -82,6 +88,7 @@ export class AuthService {
           created_at: new Date(),
           last_used_at: new Date(),
           is_active: true,
+          countryCode: country.country_code,
         });
 
         return {
@@ -101,6 +108,9 @@ export class AuthService {
 
         const refreshToken = this.generateRefreshToken();
 
+        const response = await axios.get(`https://ipapi.co/${dto.ip}/json/`);
+        const country = response.data;
+
         const session = await this.sessionsService.createSession({
           user: savedUser,
           refresh_token: refreshToken,
@@ -110,6 +120,7 @@ export class AuthService {
           created_at: new Date(),
           last_used_at: new Date(),
           is_active: true,
+          countryCode: country.country_code,
         });
 
         const payload = {

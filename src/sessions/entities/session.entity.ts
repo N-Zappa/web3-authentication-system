@@ -37,4 +37,7 @@ export class Session {
 
   @Column({ nullable: false })
   is_active: boolean;
+
+  @Column({ nullable: false })
+  countryCode: string;
 }

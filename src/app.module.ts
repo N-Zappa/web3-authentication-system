@@ -31,7 +31,7 @@ import { AuthGuard } from './auth/auth.guard';
       entities: [User, Nonce, Session],
       migrations: [__dirname.replace('src', 'migrations') + '/*.ts'],
       synchronize: false,
-      logging: true,
+      logging: false,
     }),
     UsersModule,
     AuthModule,

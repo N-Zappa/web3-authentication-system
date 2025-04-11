@@ -9,4 +9,5 @@ export interface ISessionType {
   created_at: Date;
   last_used_at: Date;
   is_active: boolean;
+  countryCode: string;
 }
