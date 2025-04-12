@@ -11,17 +11,17 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async existsByWallet(wallet: string) {
+  async existsByWallet(wallet: string): Promise<boolean> {
     return await this.usersRepository.exists({
       where: { wallet: wallet.toLowerCase() },
     });
   }
 
-  async saveUser(userDto: IUserType) {
+  async saveUser(userDto: IUserType): Promise<IUserType & User> {
     return await this.usersRepository.save(userDto);
   }
 
-  async getUserByWallet(wallet: string) {
+  async getUserByWallet(wallet: string): Promise<User> {
     return await this.usersRepository.findOne({
       where: { wallet: wallet.toLowerCase() },
     });

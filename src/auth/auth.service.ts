@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { NonceService } from 'src/nonces/nonce.service';
-import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 import { verifyMessage } from 'ethers';
 import { UsersService } from 'src/users/users.service';
 import { SessionsService } from 'src/sessions/sessions.service';
@@ -14,6 +14,9 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 import axios from 'axios';
 import { IP_API } from 'src/config/config';
+import { GetNonce } from './types/get-nonce.type';
+import { SignUp } from './types/sign-up.type';
+import { RefreshAccessToken } from './types/refresh-access-token.type';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +36,7 @@ export class AuthService {
     return randomBytes(32).toString('hex');
   }
 
-  async getNonce(wallet: string) {
+  async getNonce(wallet: string): Promise<GetNonce> {
     const nonceInfo = await this.nonceService.getNonceByWallet(wallet);
     if (!nonceInfo) {
       const generatedNonce = this.nonceService.generateNonce();
@@ -46,7 +49,7 @@ export class AuthService {
     return { nonce: nonceInfo.nonce, timestamp: nonceInfo.timestamp };
   }
 
-  async signUp(dto: SignInDto) {
+  async signUp(dto: SignUpDto): Promise<SignUp> {
     const recoveredWallet = verifyMessage(dto.nonce, dto.signature);
 
     if (recoveredWallet.toLowerCase() !== dto.wallet.toLowerCase()) {
@@ -110,7 +113,9 @@ export class AuthService {
     }
   }
 
-  async refreshAccessToken(dto: RefreshAccessTokenDto) {
+  async refreshAccessToken(
+    dto: RefreshAccessTokenDto,
+  ): Promise<RefreshAccessToken> {
     const session = await this.sessionsService.getSessionById(dto.sessionId);
     if (!session) {
       throw new UnauthorizedException('No session found');

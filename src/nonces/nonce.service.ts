@@ -4,6 +4,7 @@ import { Nonce } from './entities/nonce.entity';
 import { Repository } from 'typeorm';
 import { INonce } from './types/nonce.type';
 import { randomBytes } from 'crypto';
+import { GenerateNonce } from './types/generate-nonce.type';
 
 @Injectable()
 export class NonceService {
@@ -12,7 +13,7 @@ export class NonceService {
     private nonceRepository: Repository<Nonce>,
   ) {}
 
-  generateNonce() {
+  generateNonce(): GenerateNonce {
     const timestamp = Date.now();
     return {
       nonce: `${randomBytes(32).toString('hex')}-${timestamp}`,
@@ -20,13 +21,13 @@ export class NonceService {
     };
   }
 
-  async getNonceByWallet(wallet: string) {
+  async getNonceByWallet(wallet: string): Promise<Nonce | null> {
     return await this.nonceRepository.findOne({
       where: { wallet: wallet.toLowerCase() },
     });
   }
 
-  async insertNonce(wallet: string, nonce: string) {
+  async insertNonce(wallet: string, nonce: string): Promise<Nonce> {
     const timestamp: number = Date.now();
     const insertNonce: INonce = {
       nonce: nonce,

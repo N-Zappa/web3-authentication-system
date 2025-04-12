@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { EvmAddressValidationPipe } from 'src/pipes/evm-address-validation.pipe';
-import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 import { Public } from './public';
 import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 
@@ -27,7 +27,7 @@ export class AuthController {
   }
 
   @Post('sign-up')
-  async signIn(@Body(new ValidationPipe()) dto: SignInDto) {
+  async signIn(@Body(new ValidationPipe()) dto: SignUpDto) {
     return this.authService.signUp(dto);
   }
 

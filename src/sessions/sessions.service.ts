@@ -11,18 +11,20 @@ export class SessionsService {
     private sessionRepository: Repository<Session>,
   ) {}
 
-  async createSession(sessionDto: ISessionType) {
+  async createSession(
+    sessionDto: ISessionType,
+  ): Promise<ISessionType & Session> {
     return await this.sessionRepository.save(sessionDto);
   }
 
-  async getSessionByUserId(userId: string) {
+  async getSessionByUserId(userId: string): Promise<Session | null> {
     return await this.sessionRepository.findOne({
       where: { user: { id: userId } },
       relations: ['user'],
     });
   }
 
-  async getSessionById(id: string) {
+  async getSessionById(id: string): Promise<Session | null> {
     return await this.sessionRepository.findOne({
       where: { id },
       relations: ['user'],
@@ -34,7 +36,7 @@ export class SessionsService {
     fingerprint: string,
     userAgent: string,
     ip: string,
-  ) {
+  ): Promise<Session | null> {
     const response = await axios.get(`${IP_API}/${ip}/json/`);
     const country = response.data;
 
