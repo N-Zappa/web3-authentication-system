@@ -11,8 +11,10 @@ import { EvmAddressValidationPipe } from 'src/pipes/evm-address-validation.pipe'
 import { SignUpDto } from './dto/sign-up.dto';
 import { Public } from './public';
 import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('Authentication')
 @Public()
 export class AuthController {
   @Inject()

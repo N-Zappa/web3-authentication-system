@@ -13,7 +13,7 @@ async function bootstrap() {
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('API')
-    .setDescription('API documentation')
+    .setDescription('API documentation for WEB3 authorization system')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
