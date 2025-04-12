@@ -16,7 +16,7 @@ import { JWT_SECRET } from 'src/config/config';
       global: true,
       secret: JWT_SECRET,
       signOptions: {
-        expiresIn: '10s',
+        expiresIn: '10m',
       },
     }),
   ],
