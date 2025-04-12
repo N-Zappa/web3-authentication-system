@@ -1,10 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RequestWalletInfo, WalletInfo } from './decorators/wallet.decorator';
 
 @Controller()
 @ApiBearerAuth()
+@ApiTags('Protected resources')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 

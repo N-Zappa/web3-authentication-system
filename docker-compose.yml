@@ -1,0 +1,36 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    container_name: db
+    ports:
+      - 127.0.0.1:5433:5432
+    networks:
+      - web3-auth-system-network
+
+  web3-auth-system:
+    image: web3-auth-system
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      - web3-auth-system-network
+    ports:
+      - 127.0.0.1:${PORT}:${PORT}
+    depends_on:
+      - db
+    command: 'npm run start:prod'
+    container_name: web3-auth-system
+    restart: always
+networks:
+  web3-auth-system-network:
+    name: web3-auth-system-network
+    external: true
