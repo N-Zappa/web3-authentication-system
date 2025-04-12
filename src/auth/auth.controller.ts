@@ -26,9 +26,9 @@ export class AuthController {
     return this.authService.getNonce(wallet);
   }
 
-  @Post('sign-in')
+  @Post('sign-up')
   async signIn(@Body(new ValidationPipe()) dto: SignInDto) {
-    return this.authService.signIn(dto);
+    return this.authService.signUp(dto);
   }
 
   @Post('refresh-access-token')

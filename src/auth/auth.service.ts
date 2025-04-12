@@ -14,7 +14,6 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 import axios from 'axios';
 import { IP_API } from 'src/config/config';
-import { IUserType } from 'src/users/types/users.type';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +46,7 @@ export class AuthService {
     return { nonce: nonceInfo.nonce, timestamp: nonceInfo.timestamp };
   }
 
-  async signIn(dto: SignInDto) {
+  async signUp(dto: SignInDto) {
     const recoveredWallet = verifyMessage(dto.nonce, dto.signature);
 
     if (recoveredWallet.toLowerCase() !== dto.wallet.toLowerCase()) {
